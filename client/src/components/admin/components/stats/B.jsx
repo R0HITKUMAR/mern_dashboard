@@ -1,7 +1,7 @@
 import React from "react";
-import img from "../../../../assets/img/icon/dp_avtar.png";
+import img from "../../../../assets/img/icons/dp_avtar.png";
 
-export default function A(props) {
+export default function B(props) {
   return (
     <div className="col-lg-6 col-md-12 col-6 mb-4">
       <div className="card text-center">
@@ -11,7 +11,7 @@ export default function A(props) {
               <img src={img} alt="-" className="rounded" />
             </div>
           </div>
-          <span className="fw-semibold d-block mb-1">Pending Voters</span>
+          <span className="fw-semibold d-block mb-1">Stats 2</span>
           <h3 className="card-title mb-2">A</h3>
         </div>
       </div>

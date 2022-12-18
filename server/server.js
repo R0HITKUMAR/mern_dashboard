@@ -23,7 +23,10 @@ app.use("/otp", OTP);
 app.use("/file", File);
 
 app.get("/", (req, res) => {
-  res.send("Hello from 1000 Projects");
+  res.send({
+    message: "Welcome to the Dashboards",
+    status: true,
+  });
 });
 
 app.listen(PORT, () => {

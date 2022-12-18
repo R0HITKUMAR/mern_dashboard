@@ -8,6 +8,10 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true },
     registeredOn: { type: String },
     role: { type: String },
+    google: { type: Boolean, default: false },
+    microsoft: { type: Boolean, default: false },
+    github: { type: Boolean, default: false },
+    img: { type: String },
   },
   {
     timestamps: true,

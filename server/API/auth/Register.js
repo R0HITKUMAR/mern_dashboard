@@ -24,7 +24,7 @@ app.post("/register", async (req, res) => {
       email: user.email,
       password: user.password,
       registeredOn: registeredOn,
-      role: "voter",
+      role: "user",
     });
     dbUser
       .save()
@@ -43,5 +43,7 @@ app.post("/register", async (req, res) => {
       });
   }
 });
+
+app.post("/registerwithgoogle", async (req, res) => {});
 
 export default app;

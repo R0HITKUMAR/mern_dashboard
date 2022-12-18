@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/img/icon/logo.svg";
 
-export default function Reset() {
+export default function Reset(props) {
   const navigate = useNavigate();
   const [alert, setAlert] = React.useState("");
   const [step, setStep] = React.useState(0);
@@ -29,12 +29,16 @@ export default function Reset() {
       axios
         .post("http://localhost:5000/otp/reset", data)
         .then((res) => {
-          setData({
-            ...data,
-            systemOTP: res.data,
-          });
-          setAlert("OTP sent to your email & Phone");
-          setStep(1);
+          if (res.data.success === false) {
+            setAlert(res.data.message);
+          } else if (res.data.success === true) {
+            setData({
+              ...data,
+              systemOTP: res.data.OTP,
+            });
+            setAlert(res.data.message);
+            setStep(1);
+          }
         })
         .catch((err) => {
           setAlert(err.response.data.message);
@@ -47,10 +51,9 @@ export default function Reset() {
   const verifyOTP = (e) => {
     e.preventDefault();
     if (data.otp.toString() === data.systemOTP.toString()) {
-      setAlert("OTP Verified Successfully");
       setStep(2);
     } else {
-      setAlert("Invalid OTP");
+      setAlert("OTP is incorrect");
     }
   };
 
@@ -91,6 +94,7 @@ export default function Reset() {
                   height={"100px"}
                 />
               </div>
+              {props.global.s_status ? <span className="badge bg-label-primary">• Live</span> : <span class="badge bg-label-dark">• Offline</span>}
               <h4 className="mb-2">Forgot Password? 🔒</h4>
               <p className="mb-4">
                 Enter your email and we'll send you OTP to reset your password
@@ -117,6 +121,7 @@ export default function Reset() {
                     <button
                       onClick={sendOTP}
                       className="btn btn-primary d-grid w-100"
+                      disabled={props.global.s_status ? false : true}
                     >
                       Send OTP
                     </button>

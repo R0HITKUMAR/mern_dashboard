@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/img/icon/logo.svg";
 
-export default function Register() {
+export default function Register(props) {
   const navigate = useNavigate();
   const [showPassword1, setShowPassword1] = React.useState(false);
   const [showPassword2, setShowPassword2] = React.useState(false);
@@ -29,11 +29,24 @@ export default function Register() {
     setAlert("");
   };
 
-  const regStart = () => {
+  const sendOTP = (e) => {
+    e.preventDefault();
     if (data.name !== "" && data.phone !== "" && data.email !== "") {
       if (data.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) {
         if (data.phone.length === 10) {
-          setStep(1);
+          axios
+            .post("http://localhost:5000/otp/NewUser", data)
+            .then((res) => {
+              setData({
+                ...data,
+                systemOTP: res.data.OTP,
+              });
+              setAlert(res.data.message);
+              setStep(1);
+            })
+            .catch((err) => {
+              setAlert(err.response.data.message);
+            });
         } else {
           setAlert("Invalid Phone Number");
         }
@@ -45,23 +58,33 @@ export default function Register() {
     }
   };
 
-  const sendOTP = (e) => {
+  const validateOTP = () => {
+    if (data.otp.toString() === data.systemOTP.toString()) {
+      setStep(2);
+    } else {
+      setAlert("Invalid OTP");
+    }
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (data.password === data.repassword) {
       if (data.password.length >= 6) {
-        axios
-          .post("http://localhost:5000/otp/NewUser", data)
-          .then((res) => {
-            setData({
-              ...data,
-              systemOTP: res.data,
+        if (document.getElementById("terms").checked) {
+          axios
+            .post("http://localhost:5000/auth/register", data)
+            .then((res) => {
+              setAlert(res.data.message);
+              setStep(0);
+              setData("");
+            })
+            .catch((err) => {
+              setAlert(err.response.data.message);
             });
-            setAlert("OTP sent to your email & phone");
-            setStep(2);
-          })
-          .catch((err) => {
-            setAlert(err.response.data.message);
-          });
+        } else {
+          setAlert("Please accept the terms and conditions");
+        }
+
       } else {
         setAlert("Password must be atleast 6 characters long");
       }
@@ -70,27 +93,7 @@ export default function Register() {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (document.getElementById("terms").checked) {
-      if (data.otp.toString() === data.systemOTP.toString()) {
-        axios
-          .post("http://localhost:5000/auth/register", data)
-          .then((res) => {
-            setAlert(res.data.message);
-            setStep(0);
-            setData("");
-          })
-          .catch((err) => {
-            setAlert(err.response.data.message);
-          });
-      } else {
-        setAlert("Invalid OTP");
-      }
-    } else {
-      setAlert("Please accept the terms and conditions");
-    }
-  };
+
 
   return (
     <div className="container-xxl">
@@ -106,7 +109,8 @@ export default function Register() {
                   height={"100px"}
                 />
               </div>
-              <h4 className="mb-2">Welcome to Cast My Vote! 👆</h4>
+              {props.global.s_status ? <span className="badge bg-label-primary">• Live</span> : <span class="badge bg-label-dark">• Offline</span>}
+              <h4 className="mb-2">Welcome to Dashboards! 👆</h4>
               <p className="mb-4">Please Register to get Started!</p>
               <p className="text-center" style={{ color: "red" }}>
                 {alert}
@@ -148,14 +152,49 @@ export default function Register() {
                       />
                     </div>
                     <button
-                      onClick={regStart}
+                      onClick={sendOTP}
                       className="btn btn-primary d-grid w-100"
+                      disabled={props.global.s_status ? false : true}
                     >
                       Continue
                     </button>
                   </>
                 )}
                 {step === 1 && (
+                  <>
+                    <div className="mb-3">
+                      <label className="form-label">Email</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="email"
+                        onChange={handleChange}
+                        value={data.email}
+                        placeholder="Enter your email"
+                        readOnly
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">OTP</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="otp"
+                        onChange={handleChange}
+                        value={data.otp}
+                        placeholder="Enter OTP Receive on your email"
+                      />
+                    </div>
+
+                    <button
+                      onClick={validateOTP}
+                      className="btn btn-primary d-grid w-100"
+                    >
+                      Continue
+                    </button>
+                  </>
+                )}
+                {step === 2 && (
                   <>
                     <div className="mb-3">
                       <label className="form-label">Email</label>
@@ -210,39 +249,6 @@ export default function Register() {
                           />
                         </span>
                       </div>
-                    </div>
-                    <button
-                      onClick={sendOTP}
-                      className="btn btn-primary d-grid w-100"
-                    >
-                      Send OTP
-                    </button>
-                  </>
-                )}
-                {step === 2 && (
-                  <>
-                    <div className="mb-3">
-                      <label className="form-label">Email</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="email"
-                        onChange={handleChange}
-                        value={data.email}
-                        placeholder="Enter your email"
-                        readOnly
-                      />
-                    </div>
-                    <div className="mb-3">
-                      <label className="form-label">OTP</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="otp"
-                        onChange={handleChange}
-                        value={data.otp}
-                        placeholder="Enter OTP Receive on your email"
-                      />
                     </div>
                     <div className="mb-3">
                       <div className="form-check">

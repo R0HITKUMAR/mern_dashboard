@@ -9,7 +9,6 @@ function changepassword(req, res) {
     dbUser
       .updateOne({ password: hash })
       .then((user) => {
-       
         return res.send({
           success: true,
           message: "Password Changed Successfully",

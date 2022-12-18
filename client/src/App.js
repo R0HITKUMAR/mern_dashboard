@@ -12,6 +12,10 @@ import User from "./components/user/User";
 function App() {
   const navigate = useNavigate();
   const [user, setUser] = React.useState([]);
+  const [global, setGlobal] = React.useState({
+    doc: "",
+    s_status: false,
+  });
 
   async function logout() {
     Swal.fire({
@@ -33,6 +37,17 @@ function App() {
   React.useEffect(() => {
     const token = localStorage.getItem("token");
     const path = window.location.pathname;
+    axios
+      .get(`http://localhost:5000`)
+      .then((res) => {
+        if (res.data.status === true) {
+          setGlobal({ ...global, s_status: true });
+        } else {
+          setGlobal({ ...global, s_status: false });
+        }
+      })
+      .catch((err) => console.log(err));
+
     if (token) {
       axios
         .get(`http://localhost:5000/auth/validate/${token}`)
@@ -71,18 +86,32 @@ function App() {
         element={
           <>
             {user.length === 0 ? (
-              <Main setUser={setUser} />
+              <Main setUser={setUser} global={global} />
             ) : user.role === "admin" ? (
-              <Admin user={user} logout={logout} />
+              <Admin
+                user={user}
+                logout={logout}
+                global={global}
+                setGlobal={setGlobal}
+              />
             ) : (
-              <User user={user} logout={logout} />
+              <User
+                user={user}
+                logout={logout}
+                global={global}
+                setGlobal={setGlobal}
+              />
             )}
           </>
         }
       />
-      <Route exact path="/login" element={<Login setUser={setUser} />} />
-      <Route exact path="/register" element={<Register />} />
-      <Route exact path="/reset" element={<Reset />} />
+      <Route
+        exact
+        path="/login"
+        element={<Login setUser={setUser} global={global} />}
+      />
+      <Route exact path="/register" element={<Register global={global} />} />
+      <Route exact path="/reset" element={<Reset global={global} />} />
     </Routes>
   );
 }

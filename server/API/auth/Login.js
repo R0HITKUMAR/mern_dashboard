@@ -23,7 +23,7 @@ function Login(req, res) {
           jwt.sign(
             payload,
             process.env.JWT_SECRET,
-            { expiresIn: "10d" },
+            { expiresIn: "30d" },
             (err, token) => {
               if (err) return res.data({ message: err });
               return res.send({
@@ -40,5 +40,6 @@ function Login(req, res) {
       });
   });
 }
+
 
 export { Login };

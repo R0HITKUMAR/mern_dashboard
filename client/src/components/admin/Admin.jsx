@@ -6,16 +6,13 @@ import Navbar from "./navbar/Navbar";
 import Modal from "../common/Modal";
 
 export default function Admin(props) {
-  const [global, setGlobal] = React.useState({
-    doc: "",
-  });
   const hideSidebar = () => {
     document.querySelector("html").classList.remove("layout-menu-expanded");
   };
 
   return (
     <>
-      {global.doc && <Modal global={global} setGlobal={setGlobal} />}
+      {props.global.doc && <Modal global={props.global} setGlobal={props.setGlobal} />}
       <div className="layout-wrapper layout-content-navbar">
         <div className="layout-container">
           <Sidebar hideSidebar={hideSidebar} logout={props.logout} />

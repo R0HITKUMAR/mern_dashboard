@@ -21,11 +21,18 @@ const handlebarOptions = {
 
 transporter.use("compile", hbs(handlebarOptions));
 
+const date = {
+  name: "Rohit Kumar",
+  email: "r.k2962002@gmail.com",
+};
+
+// registerOTP(date, 123456);
+
 function registerOTP(user, OTP) {
   var mailOptions = {
-    from: "CastMyVote <no-reply@aboutrohit.in>",
+    from: "Dashboards <no-reply@aboutrohit.in>",
     to: user.email,
-    subject: "OTP to verify your Account on CastMyVote",
+    subject: "OTP to verify your Account on Dashboards",
     template: "registerOTP",
     context: {
       name: user.name,
@@ -45,9 +52,9 @@ function registerOTP(user, OTP) {
 
 function welcomeMail(name, email) {
   var mailOptions = {
-    from: "CastMyVote <no-reply@aboutrohit.in>",
+    from: "Dashboards <no-reply@aboutrohit.in>",
     to: email,
-    subject: "Welcome to CastMyVote",
+    subject: "Welcome to Dashboards",
     template: "welcome",
     context: {
       name: name,
@@ -64,34 +71,14 @@ function welcomeMail(name, email) {
   });
 }
 
-function loginOTP(user, OTP) {
-  var mailOptions = {
-    from: "CastMyVote <no-reply@aboutrohit.in>",
-    to: user.email,
-    subject: "OTP to Login into your Account on CastMyVote",
-    template: "loginOTP",
-    context: {
-      email: user.email,
-      otp: OTP,
-    },
-  };
-
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Email sent: " + info.response);
-    }
-  });
-}
-
 function resetOTP(user, OTP) {
   var mailOptions = {
-    from: "CastMyVote <no-reply@aboutrohit.in>",
+    from: "Dashboards <no-reply@aboutrohit.in>",
     to: user.email,
-    subject: "OTP to Reset Password on CastMyVote",
+    subject: "OTP to Reset Password on Dashboards",
     template: "resetOTP",
     context: {
+      name: user.name,
       email: user.email,
       otp: OTP,
     },
@@ -106,4 +93,4 @@ function resetOTP(user, OTP) {
   });
 }
 
-export { registerOTP, welcomeMail, loginOTP, resetOTP };
+export { registerOTP, welcomeMail, resetOTP };
